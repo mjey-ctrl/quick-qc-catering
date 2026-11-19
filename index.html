@@ -19,18 +19,7 @@
   --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #172029; --surface: #213040; --ink: #ece5d6; --muted: #a9b0b8; --line: #36495c;
-    --navy: #0f161d; --on-navy: #f1ead9; --gold: #c4a36a; --gold-ink: #d6b87f; --good: #7cc29b;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #172029; --surface: #213040; --ink: #ece5d6; --muted: #a9b0b8; --line: #36495c;
-  --navy: #0f161d; --on-navy: #f1ead9; --gold: #c4a36a; --gold-ink: #d6b87f; --good: #7cc29b;
-  color-scheme: dark;
-}
+:root { color-scheme: light; }
 * { box-sizing: border-box; }
 body {
   background: var(--bg); color: var(--ink);
