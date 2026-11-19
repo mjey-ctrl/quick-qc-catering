@@ -1,0 +1,369 @@
+<title>Quick QC Catering Form</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;1,500&display=swap">
+<style>
+/* Layout: single centered column of numbered-free sections; package cards in a wrapping grid; sticky-free total card at the end. */
+:root {
+  --bg: #e9e2d5;
+  --surface: #fffdf4;
+  --ink: #232f3b;
+  --muted: #5d6670;
+  --line: #d3c9b6;
+  --navy: #2a3a4a;
+  --on-navy: #f1ead9;
+  --gold: #a08650;
+  --gold-ink: #75592a;
+  --good: #2f6b4a;
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #172029; --surface: #213040; --ink: #ece5d6; --muted: #a9b0b8; --line: #36495c;
+    --navy: #0f161d; --on-navy: #f1ead9; --gold: #c4a36a; --gold-ink: #d6b87f; --good: #7cc29b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #172029; --surface: #213040; --ink: #ece5d6; --muted: #a9b0b8; --line: #36495c;
+  --navy: #0f161d; --on-navy: #f1ead9; --gold: #c4a36a; --gold-ink: #d6b87f; --good: #7cc29b;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-block: 0 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+header.top {
+  background: var(--navy); color: var(--on-navy);
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  padding: 28px max(16px, env(safe-area-inset-left, 0px)) 26px;
+}
+header.top .in { max-width: 720px; margin: 0 auto; }
+.brand { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+h1 { font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: clamp(28px, 7vw, 40px); line-height: 1.15; margin: 6px 0 8px; text-wrap: balance; }
+.sub { margin: 0; color: var(--on-navy); opacity: .85; max-width: 52ch; }
+.contact { margin-top: 12px; font-size: 13px; opacity: .9; }
+section { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 20px 18px; }
+h2 { font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 22px; margin: 0 0 4px; color: var(--ink); }
+.hint { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.grid .full { grid-column: 1 / -1; }
+@media (max-width: 520px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+label.f { display: flex; flex-direction: column; gap: 5px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-ink); min-width: 0; }
+input[type=text], input[type=tel], input[type=number], input[type=date], input[type=time], select {
+  font: inherit; font-size: 16px; letter-spacing: 0; text-transform: none; font-weight: 400;
+  color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 4px;
+  padding: 10px 11px; width: 100%; min-width: 0; min-height: 44px;
+}
+input:focus-visible, select:focus-visible, button:focus-visible, .pkg input:focus-visible + .card { outline: 3px solid var(--gold); outline-offset: 2px; }
+.pkgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.pkg { position: relative; display: block; min-width: 0; }
+.pkg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.pkg .card { display: block; height: 100%; border: 1px solid var(--line); border-radius: 4px; padding: 12px; background: var(--bg); }
+.pkg input:checked + .card { border-color: var(--gold); background: var(--navy); color: var(--on-navy); box-shadow: 0 0 0 2px var(--gold); }
+.price { font-family: var(--font-display); font-size: 24px; font-weight: 600; display: block; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.per { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .75; }
+.cats { margin: 8px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 4px; }
+.cats li { font-size: 11px; padding: 2px 7px; border: 1px solid currentColor; border-radius: 999px; opacity: .85; }
+.together { margin-top: 14px; font-size: 13px; color: var(--muted); }
+.together b { color: var(--ink); font-weight: 600; }
+.empty { color: var(--muted); font-style: italic; margin: 0; }
+.menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 520px) { .menu { grid-template-columns: minmax(0, 1fr); } }
+.fixed { font-size: 14px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.fixed span.k { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-ink); }
+.fixed span.v { min-height: 44px; display: flex; align-items: center; padding: 0 2px; }
+ul.inc { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; }
+@media (max-width: 520px) { ul.inc { grid-template-columns: minmax(0, 1fr); } }
+ul.inc li { padding-left: 22px; position: relative; }
+ul.inc li::before { content: ""; position: absolute; left: 3px; top: .45em; width: 6px; height: 11px; border: solid var(--good); border-width: 0 2px 2px 0; transform: rotate(45deg) translateY(-30%); }
+table.calc { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+table.calc td { padding: 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.calc td:last-child { text-align: right; white-space: nowrap; padding-left: 12px; }
+table.calc .sm { display: block; color: var(--muted); font-size: 12px; }
+.trans { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.trans input { width: 120px; text-align: right; }
+.total { background: var(--navy); color: var(--on-navy); border-radius: 4px; padding: 16px; margin-top: 14px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.total .t { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+.total .amt { font-family: var(--font-display); font-size: 32px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.note { color: var(--muted); font-size: 12px; margin: 10px 0 0; }
+pre.sum { white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 14px; margin: 0 0 12px; }
+button.copy { font: inherit; font-weight: 600; min-height: 46px; padding: 0 20px; border: 0; border-radius: 4px; background: var(--gold); color: #1b2530; cursor: pointer; }
+button.copy:hover { filter: brightness(1.06); }
+.status { margin-left: 10px; font-size: 13px; color: var(--good); }
+footer { text-align: center; color: var(--muted); font-size: 13px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top"><div class="in">
+    <div class="brand">Quick QC · An experience you can taste</div>
+    <h1>Catering Request Form</h1>
+    <p class="sub">Fill in your event details, pick a package and your dishes. The total updates as you go. Send the summary to Quick QC to confirm your booking.</p>
+    <div class="contact">Contact: 0915 498 5170</div>
+  </div></header>
+
+  <section aria-labelledby="h-event">
+    <h2 id="h-event">Event details</h2>
+    <p class="hint">Re: Catering service</p>
+    <div class="grid">
+      <label class="f full" for="client">Client<input id="client" type="text" autocomplete="name" placeholder="Full name"></label>
+      <label class="f" for="contact">Contact no.<input id="contact" type="tel" inputmode="tel" autocomplete="tel" placeholder="09xx xxx xxxx"></label>
+      <label class="f" for="func">Function<input id="func" type="text" placeholder="Birthday, wedding, debut…"></label>
+      <label class="f" for="guests">Expected guests<input id="guests" type="number" inputmode="numeric" min="1" step="1" placeholder="e.g. 100"></label>
+      <label class="f" for="date">Date<input id="date" type="date"></label>
+      <label class="f" for="time">Time<input id="time" type="time"></label>
+      <label class="f" for="motif">Color motif<input id="motif" type="text" placeholder="e.g. Blush pink and gold"></label>
+      <label class="f full" for="venue">Venue<input id="venue" type="text" placeholder="Name of venue"></label>
+      <label class="f full" for="vaddr">Venue address<input id="vaddr" type="text" autocomplete="street-address" placeholder="Street, barangay, city"></label>
+      <label class="f full" for="landmark">Landmark<input id="landmark" type="text" placeholder="Near what place?"></label>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-pkg">
+    <h2 id="h-pkg">Choose your package</h2>
+    <p class="hint">Price is per head. Every package includes free pastries or garden salad.</p>
+    <div class="pkgs" id="pkgs" role="radiogroup" aria-label="Package"></div>
+    <p class="together"><b>Together with:</b> Dessert, Rice, Juices, Water</p>
+  </section>
+
+  <section aria-labelledby="h-menu">
+    <h2 id="h-menu">Set of meals</h2>
+    <p class="hint">Pick one dish for each item in your package.</p>
+    <div id="menu"><p class="empty">Choose a package above to see your dishes.</p></div>
+  </section>
+
+  <section aria-labelledby="h-inc">
+    <h2 id="h-inc">Package includes</h2>
+    <p class="hint">Amenities in every booking.</p>
+    <ul class="inc">
+      <li>Chairs and tables</li>
+      <li>Full set of buffet table</li>
+      <li>Complete catering amenities</li>
+      <li>Glasswares and utensils</li>
+      <li>Complete set up of dining</li>
+      <li>Waiters and food attendants</li>
+      <li>Linen drape</li>
+      <li>Cake and gift table</li>
+      <li>Flower or balloon per table</li>
+      <li>Simple backdrop</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-calc">
+    <h2 id="h-calc">Computation</h2>
+    <p class="hint">Estimate based on your choices.</p>
+    <table class="calc"><tbody id="calc"></tbody></table>
+    <div class="total"><span class="t">Total</span><span class="amt" id="total">Php 0</span></div>
+    <p class="note">Transportation depends on your venue. Leave it blank if Quick QC has not quoted it yet. Final amount is confirmed by Quick QC.</p>
+  </section>
+
+  <section aria-labelledby="h-sum">
+    <h2 id="h-sum">Your summary</h2>
+    <p class="hint">Copy this and send it to Quick QC at 0915 498 5170.</p>
+    <pre class="sum" id="sum"></pre>
+    <button class="copy" id="copy" type="button">Copy summary</button><span class="status" id="status" role="status"></span>
+  </section>
+
+  <footer>Thank you! · Quick QC Catering Services</footer>
+</div>
+
+<script>
+(function () {
+  var PACKAGES = [
+    { price: 360, cats: ["Pork", "Chicken", "Pasta", "Vegetable"] },
+    { price: 380, cats: ["Pork", "Chicken", "Pasta", "Fish"] },
+    { price: 410, cats: ["Beef", "Chicken", "Pasta", "Vegetable"] },
+    { price: 430, cats: ["Beef", "Chicken", "Fish", "Pasta"] },
+    { price: 450, cats: ["Beef", "Pork", "Fish", "Pasta"] },
+    { price: 470, cats: ["Pork", "Chicken", "Fish", "Pasta", "Vegetable"] },
+    { price: 490, cats: ["Beef", "Chicken", "Fish", "Pasta", "Vegetable"] },
+    { price: 510, cats: ["Beef", "Pork", "Chicken", "Fish", "Pasta"] },
+    { price: 530, cats: ["Beef", "Pork", "Chicken", "Fish", "Pasta", "Vegetable"] }
+  ];
+  var EXTRA = 50;
+  var DISHES = {
+    Beef: ["Beef Salpicao", "Beef with Mushroom", "Beef Teriyaki", "Beef Caldereta", "Roasted Beef with Mash Potato", "Beef Mechado", "Beef Broccoli", "Beef Stroganoff"],
+    Pork: ["Hawaiian Porkloin", "Porkloin in Red Sauce", "Asian Pork Spareribs", "Roast Pork with Mushroom Sauce", "Pork Teriyaki", "Pork Tonkatsu", "Grilled Pork BBQ", "Pork Salpicao"],
+    Chicken: ["Buttered Garlic Chicken", "Chicken Cordon Bleu", "Chicken Pastel", "South China Chicken", "Chicken Teriyaki", "Chicken Torikatsu", "Honey Glazed Chicken", "Creamy Garlic Chicken Breast"],
+    Fish: ["Fish Fillet Dip", "Fish Oyster Sauce", "Fish Fillet Ginger", "Sweet and Sour Fish", "Steam Fish Aioli", "Sea Foods Kare Kare|extra", "Seafoods Paella|extra"],
+    Pasta: ["Baked Ziti", "Creamy Pesto Pasta", "Sotanghon Guisado", "Pancit Bihon Guisado", "Penne and Cheese", "Linguine Carbonara", "Canton Guisado", "Truffle Pasta"],
+    Vegetable: ["Mongolian Vegetable", "Ubod in Peanut Sauce", "Buttered Vegetables", "Vegetable Kare-Kare", "Corn & Carrots", "Chinese Chopsuey", "Oystered Vegetable", "Buttered Baby Potatoes with Chorizo"],
+    Dessert: ["Peach Mango Cream", "Buko Pandan", "Mango Tapioca", "Coffee Jelly", "Fresh Fruits", "Almond Jello with Lychee"],
+    Juice: ["Iced Tea / Red Iced Tea", "Blue Lemonade", "Cucumber Juice", "Four Seasons"],
+    Salad: ["Free Pastries", "Garden Salad"]
+  };
+  var LABEL = { Vegetable: "Veg", Juice: "Juice", Salad: "Salad bar" };
+
+  var pick = {};          // category -> dish string (with |extra flag kept separately)
+  var pkgIndex = -1;
+  var $ = function (id) { return document.getElementById(id); };
+  var php = function (n) { return "Php " + Math.round(n).toLocaleString("en-PH"); };
+  function dishName(s) { return s.split("|")[0]; }
+  function isExtra(s) { return s.indexOf("|extra") > -1; }
+
+  // package cards
+  var pk = $("pkgs");
+  PACKAGES.forEach(function (p, i) {
+    var l = document.createElement("label"); l.className = "pkg";
+    var inp = document.createElement("input"); inp.type = "radio"; inp.name = "pkg"; inp.value = i;
+    inp.setAttribute("aria-label", "Php " + p.price + " per head: " + p.cats.join(", "));
+    var c = document.createElement("span"); c.className = "card";
+    var pr = document.createElement("span"); pr.className = "price"; pr.textContent = "Php " + p.price;
+    var pe = document.createElement("span"); pe.className = "per"; pe.textContent = "per head";
+    var ul = document.createElement("ul"); ul.className = "cats";
+    p.cats.forEach(function (n) { var li = document.createElement("li"); li.textContent = n; ul.appendChild(li); });
+    c.appendChild(pr); c.appendChild(pe); c.appendChild(ul);
+    l.appendChild(inp); l.appendChild(c); pk.appendChild(l);
+    inp.addEventListener("change", function () { pkgIndex = i; renderMenu(); update(); });
+  });
+
+  function selectField(cat) {
+    var wrap = document.createElement("label"); wrap.className = "f"; wrap.setAttribute("for", "m-" + cat);
+    wrap.appendChild(document.createTextNode(LABEL[cat] || cat));
+    var s = document.createElement("select"); s.id = "m-" + cat;
+    var o0 = document.createElement("option"); o0.value = ""; o0.textContent = "Choose a dish"; s.appendChild(o0);
+    DISHES[cat].forEach(function (d) {
+      var o = document.createElement("option"); o.value = d;
+      o.textContent = dishName(d) + (isExtra(d) ? " (+Php " + EXTRA + "/head)" : "");
+      s.appendChild(o);
+    });
+    s.value = pick[cat] || "";
+    s.addEventListener("change", function () { pick[cat] = s.value; update(); });
+    wrap.appendChild(s);
+    return wrap;
+  }
+
+  function renderMenu() {
+    var m = $("menu"); m.textContent = "";
+    if (pkgIndex < 0) { var e = document.createElement("p"); e.className = "empty"; e.textContent = "Choose a package above to see your dishes."; m.appendChild(e); return; }
+    var g = document.createElement("div"); g.className = "menu";
+    PACKAGES[pkgIndex].cats.forEach(function (c) { g.appendChild(selectField(c)); });
+    ["Salad", "Dessert", "Juice"].forEach(function (c) { g.appendChild(selectField(c)); });
+    [["Rice", "Steamed rice"], ["Water and ice", "Included"]].forEach(function (x) {
+      var d = document.createElement("div"); d.className = "fixed";
+      var k = document.createElement("span"); k.className = "k"; k.textContent = x[0];
+      var v = document.createElement("span"); v.className = "v"; v.textContent = x[1];
+      d.appendChild(k); d.appendChild(v); g.appendChild(d);
+    });
+    m.appendChild(g);
+  }
+
+  function extras() {
+    if (pkgIndex < 0) return [];
+    return PACKAGES[pkgIndex].cats.filter(function (c) { return pick[c] && isExtra(pick[c]); }).map(function (c) { return dishName(pick[c]); });
+  }
+
+  function row(left, sub, right) {
+    var tr = document.createElement("tr");
+    var a = document.createElement("td"); a.textContent = left;
+    if (sub) { var s = document.createElement("span"); s.className = "sm"; s.textContent = sub; a.appendChild(s); }
+    var b = document.createElement("td");
+    if (typeof right === "string") b.textContent = right; else b.appendChild(right);
+    tr.appendChild(a); tr.appendChild(b); return tr;
+  }
+
+  var transVal = "";
+  function update() {
+    var g = parseInt($("guests").value, 10) || 0;
+    var calc = $("calc"); calc.textContent = "";
+    var total = 0;
+    if (pkgIndex < 0) {
+      var tr = document.createElement("tr"), td = document.createElement("td");
+      td.colSpan = 2; td.className = "empty"; td.textContent = "Choose a package and enter your guest count.";
+      tr.appendChild(td); calc.appendChild(tr);
+    } else {
+      var p = PACKAGES[pkgIndex];
+      var base = p.price * g; total += base;
+      calc.appendChild(row("Package", php(p.price) + " × " + g + " guests", php(base)));
+      extras().forEach(function (n) {
+        var x = EXTRA * g; total += x;
+        calc.appendChild(row(n, "+" + php(EXTRA) + " × " + g + " guests", php(x)));
+      });
+    }
+    var ti = document.createElement("span"); ti.className = "trans";
+    var inp = document.createElement("input"); inp.type = "number"; inp.id = "trans"; inp.min = "0"; inp.step = "50"; inp.inputMode = "numeric"; inp.placeholder = "0"; inp.value = transVal;
+    inp.setAttribute("aria-label", "Transportation fee in pesos");
+    inp.addEventListener("input", function () { transVal = inp.value; updateTotals(); });
+    var pre = document.createElement("span"); pre.textContent = "Php"; ti.appendChild(pre); ti.appendChild(inp);
+    calc.appendChild(row("Transportation", "Depends on venue", ti));
+    updateTotals();
+  }
+
+  function currentTotal() {
+    var g = parseInt($("guests").value, 10) || 0;
+    var t = 0;
+    if (pkgIndex >= 0) t += (PACKAGES[pkgIndex].price + EXTRA * extras().length) * g;
+    t += parseFloat(transVal) || 0;
+    return t;
+  }
+  function updateTotals() { $("total").textContent = php(currentTotal()); buildSummary(); }
+
+  function val(id) { var v = $(id).value.trim(); return v || "-"; }
+  function buildSummary() {
+    var g = parseInt($("guests").value, 10) || 0;
+    var d = $("date").value, t = $("time").value;
+    var lines = [
+      "Re: Catering service", "",
+      "Client: " + val("client"),
+      "Contact no: " + val("contact"),
+      "Function: " + val("func"),
+      "Expected guests: " + (g || "-"),
+      "Date: " + (d || "-"),
+      "Time: " + (t || "-"),
+      "Venue: " + val("venue"),
+      "Venue address: " + val("vaddr"),
+      "Landmark: " + val("landmark"),
+      "Color motif: " + val("motif"), "",
+      "Set of meals"
+    ];
+    if (pkgIndex < 0) lines.push("Package: not chosen yet");
+    else {
+      var p = PACKAGES[pkgIndex];
+      lines.push("Package: Php " + p.price + " per head");
+      p.cats.forEach(function (c) { lines.push((LABEL[c] || c) + ": " + (pick[c] ? dishName(pick[c]) : "-")); });
+    }
+    lines.push("Salad bar: " + (pick.Salad || "-"));
+    lines.push("Dessert: " + (pick.Dessert ? dishName(pick.Dessert) : "-"));
+    lines.push("Juice: " + (pick.Juice || "-"));
+    lines.push("Rice, water and ice: included", "");
+    lines.push("Computation:");
+    if (pkgIndex >= 0 && g) {
+      lines.push(php(PACKAGES[pkgIndex].price) + " x " + g + " guests = " + php(PACKAGES[pkgIndex].price * g));
+      extras().forEach(function (n) { lines.push(n + " +" + php(EXTRA) + " x " + g + " = " + php(EXTRA * g)); });
+    } else lines.push("-");
+    lines.push("Transportation: " + (parseFloat(transVal) ? php(parseFloat(transVal)) : "to be confirmed"));
+    lines.push("Total: " + php(currentTotal()), "", "Thank you");
+    $("sum").textContent = lines.join("\n");
+  }
+
+  ["client", "contact", "func", "guests", "date", "time", "motif", "venue", "vaddr", "landmark"].forEach(function (id) {
+    $(id).addEventListener("input", update);
+    $(id).addEventListener("change", update);
+  });
+
+  $("copy").addEventListener("click", function () {
+    var text = $("sum").textContent, st = $("status");
+    function ok() { st.textContent = "Copied"; setTimeout(function () { st.textContent = ""; }, 2500); }
+    function fallback() {
+      try {
+        var r = document.createRange(); r.selectNodeContents($("sum"));
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        st.textContent = "Selected. Press copy on your keyboard or menu.";
+      } catch (e) { st.textContent = ""; }
+    }
+    try {
+      navigator.clipboard.writeText(text).then(ok, fallback);
+    } catch (e) { fallback(); }
+  });
+
+  update();
+})();
+</script>
