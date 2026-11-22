@@ -146,12 +146,23 @@ footer { text-align: center; color: var(--muted); font-size: 13px; }
     </ul>
   </section>
 
+  <section aria-labelledby="h-terms">
+    <h2 id="h-terms">Event terms</h2>
+    <p class="hint">Please read before booking.</p>
+    <ul class="inc terms">
+      <li>Set up time: 2 to 3 hours before the event.</li>
+      <li>Event duration: 4 hours, starting at the agreed time.</li>
+      <li>Overtime: Php 1,000 per hour.</li>
+      <li>Hauling fee: Php 1,000 per floor. Not payable if the venue has an elevator.</li>
+    </ul>
+  </section>
+
   <section aria-labelledby="h-calc">
     <h2 id="h-calc">Computation</h2>
     <p class="hint">Estimate based on your choices.</p>
     <table class="calc"><tbody id="calc"></tbody></table>
     <div class="total"><span class="t">Total</span><span class="amt" id="total">Php 0</span></div>
-    <p class="note">Transportation depends on your venue. Leave it blank if Quick QC has not quoted it yet. Final amount is confirmed by Quick QC.</p>
+    <p class="note">Transportation depends on your venue. Leave it blank if Quick QC has not quoted it yet. Overtime and hauling are only charged when they apply. Final amount is confirmed by Quick QC.</p>
   </section>
 
   <section aria-labelledby="h-sum">
@@ -259,7 +270,9 @@ footer { text-align: center; color: var(--muted); font-size: 13px; }
     tr.appendChild(a); tr.appendChild(b); return tr;
   }
 
-  var transVal = "";
+  var transVal = "", haulFloors = "", elevator = false, otHours = "";
+  function haulAmt() { return elevator ? 0 : (parseInt(haulFloors, 10) || 0) * 1000; }
+  function otAmt() { return (parseFloat(otHours) || 0) * 1000; }
   function update() {
     var g = parseInt($("guests").value, 10) || 0;
     var calc = $("calc"); calc.textContent = "";
@@ -283,6 +296,32 @@ footer { text-align: center; color: var(--muted); font-size: 13px; }
     inp.addEventListener("input", function () { transVal = inp.value; updateTotals(); });
     var pre = document.createElement("span"); pre.textContent = "Php"; ti.appendChild(pre); ti.appendChild(inp);
     calc.appendChild(row("Transportation", "Depends on venue", ti));
+
+    var ev = document.createElement("input"); ev.type = "checkbox"; ev.id = "elev"; ev.checked = elevator;
+    ev.style.width = "22px"; ev.style.height = "22px";
+    ev.setAttribute("aria-label", "Venue has an elevator");
+    ev.addEventListener("change", function () { elevator = ev.checked; updateTotals(); });
+    calc.appendChild(row("Venue has an elevator", "No hauling fee if yes", ev));
+
+    var hv = document.createElement("span"); hv.className = "trans";
+    var hi = document.createElement("input"); hi.type = "number"; hi.id = "floors"; hi.min = "0"; hi.step = "1"; hi.inputMode = "numeric"; hi.placeholder = "0"; hi.value = haulFloors;
+    hi.setAttribute("aria-label", "Number of floors for hauling");
+    hi.addEventListener("input", function () { haulFloors = hi.value; updateTotals(); });
+    var hl = document.createElement("span"); hl.textContent = "floors";
+    hv.appendChild(hi); hv.appendChild(hl);
+    var haulRow = row("Hauling fee", "Php 1,000 per floor", hv);
+    haulRow.querySelector(".sm").id = "haulSub";
+    calc.appendChild(haulRow);
+
+    var ov = document.createElement("span"); ov.className = "trans";
+    var oi = document.createElement("input"); oi.type = "number"; oi.id = "ot"; oi.min = "0"; oi.step = "0.5"; oi.inputMode = "decimal"; oi.placeholder = "0"; oi.value = otHours;
+    oi.setAttribute("aria-label", "Overtime hours");
+    oi.addEventListener("input", function () { otHours = oi.value; updateTotals(); });
+    var ol = document.createElement("span"); ol.textContent = "hours";
+    ov.appendChild(oi); ov.appendChild(ol);
+    var otRow = row("Overtime", "Php 1,000 per hour", ov);
+    otRow.querySelector(".sm").id = "otSub";
+    calc.appendChild(otRow);
     updateTotals();
   }
 
@@ -290,10 +329,15 @@ footer { text-align: center; color: var(--muted); font-size: 13px; }
     var g = parseInt($("guests").value, 10) || 0;
     var t = 0;
     if (pkgIndex >= 0) t += (PACKAGES[pkgIndex].price + EXTRA * extras().length) * g;
-    t += parseFloat(transVal) || 0;
+    t += (parseFloat(transVal) || 0) + haulAmt() + otAmt();
     return t;
   }
-  function updateTotals() { $("total").textContent = php(currentTotal()); buildSummary(); }
+  function updateTotals() {
+    var hs = $("haulSub"), os = $("otSub");
+    if (hs) hs.textContent = elevator ? "Php 0 (venue has an elevator)" : "Php 1,000 per floor = " + php(haulAmt());
+    if (os) os.textContent = "Php 1,000 per hour = " + php(otAmt());
+    $("total").textContent = php(currentTotal()); buildSummary();
+  }
 
   function val(id) { var v = $(id).value.trim(); return v || "-"; }
   function buildSummary() {
@@ -329,6 +373,9 @@ footer { text-align: center; color: var(--muted); font-size: 13px; }
       extras().forEach(function (n) { lines.push(n + " +" + php(EXTRA) + " x " + g + " = " + php(EXTRA * g)); });
     } else lines.push("-");
     lines.push("Transportation: " + (parseFloat(transVal) ? php(parseFloat(transVal)) : "to be confirmed"));
+    lines.push("Hauling fee: " + (elevator ? "Php 0 (venue has an elevator)" : (parseInt(haulFloors, 10) || 0) + " floor(s) x Php 1,000 = " + php(haulAmt())));
+    lines.push("Overtime: " + (parseFloat(otHours) || 0) + " hour(s) x Php 1,000 = " + php(otAmt()));
+    lines.push("Terms: 2-3 hours set up, 4 hours event starting at the agreed time");
     lines.push("Total: " + php(currentTotal()), "", "Thank you");
     $("sum").textContent = lines.join("\n");
   }
